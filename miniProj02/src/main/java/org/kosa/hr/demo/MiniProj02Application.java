@@ -1,4 +1,4 @@
-package org.hr.demo;
+package org.kosa.hr.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
