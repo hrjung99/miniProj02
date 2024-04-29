@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.kosa.hr.board.BoardMapper">
+	
+	<sql id="search">
+		<where>
+			<if test="searchKey != null and searchKey != ''">
+				btitle like concat('%', #{searchKey}, '%')
+			</if>
+		</where>
+	</sql>
+
+	<select id="getList" resultType="BoardVO">
+		SELECT B.BNO,B.BTITLE, B.BCONTENT, M.MNAME, B.BDATE, B.VIEW_COUNT FROM TB_BOARD B INNER JOIN TB_MEMBER M ON B.MID=M.MID ORDER BY BNO ;
+		<include refid="search" />
+		order by bno desc limit #{skip}, #{size}
+
+	</select>
+ 
+
+
+
+
+
+
+
+</mapper>
