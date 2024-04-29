@@ -5,19 +5,25 @@
 <mapper namespace="org.kosa.hr.board.BoardMapper">
 	
 	<sql id="search">
-		<where>
-			<if test="searchKey != null and searchKey != ''">
-				btitle like concat('%', #{searchKey}, '%')
-			</if>
-		</where>
-	</sql>
+        <where>
+            <if test="searchKey != null and searchKey != ''">
+                btitle like concat('%', #{searchKey}, '%')
+            </if>
+        </where>
+    </sql>
 
 	<select id="getList" resultType="BoardVO">
-		SELECT B.BNO,B.BTITLE, B.BCONTENT, M.MNAME, B.BDATE, B.VIEW_COUNT FROM TB_BOARD B INNER JOIN TB_MEMBER M ON B.MID=M.MID ORDER BY BNO ;
-		<include refid="search" />
+		SELECT B.BNO,B.BTITLE, B.BCONTENT, M.MNAME AS BWRITER , B.BDATE FROM TB_BOARD B INNER JOIN TB_MEMBER M ON B.MID=M.MID  	
+		<include refid="search"/>
 		order by bno desc limit #{skip}, #{size}
-
-	</select>
+    </select>
+    
+    <select id="getTotalCount" resultType="int">
+		select 
+			count(*)   
+		from tb_board 
+		<include refid="search"/>
+    </select>
  
 
 

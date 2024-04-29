@@ -17,7 +17,7 @@ public class PageResponseVO<E> {
 
 	private List<E> list;
 
-	@Builder(builderMethodName = "withAll")
+	@Builder()
 	public PageResponseVO(List<E> list, int total, int pageNo, int size) {
 
 		this.pageNo = pageNo;

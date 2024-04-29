@@ -31,7 +31,11 @@ public class BoardController {
 	public String list(@Valid PageRequestVO pageRequestVO, BindingResult bindingResult, Model model) throws ServletException, IOException {
 		log.info("Controller-목록");
 		
+		log.info(pageRequestVO.toString());
 		
+		if(bindingResult.hasErrors()) {
+			pageRequestVO = PageRequestVO.builder().build();
+		}
 		
 		return "board/list";
 	}
