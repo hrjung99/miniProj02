@@ -12,7 +12,7 @@
         </where>
     </sql>
 
-	<select id="getList" resultType="BoardVO">
+	<select id="getList" resultType="org.kosa.hr.entity.BoardVO">
 		SELECT B.BNO,B.BTITLE, B.BCONTENT, M.MNAME AS BWRITER , B.BDATE FROM TB_BOARD B INNER JOIN TB_MEMBER M ON B.MID=M.MID  	
 		<include refid="search"/>
 		order by bno desc limit #{skip}, #{size}
