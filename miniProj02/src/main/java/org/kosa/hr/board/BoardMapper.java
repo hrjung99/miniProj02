@@ -11,6 +11,9 @@ public interface BoardMapper {
 	
 	List<BoardVO> getList(PageRequestVO pageRequestVO);
 	int getTotalCount(PageRequestVO pageRequestVO);
-	//int incViewCount(BoardVO boardVO);
+
+
+	BoardVO view(BoardVO boardVO);
+	int incViewCount(BoardVO boardVO);
 
 }

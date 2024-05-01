@@ -1,21 +1,26 @@
 package org.kosa.hr.board;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.validation.Valid;
 
 import org.kosa.hr.code.CodeService;
+import org.kosa.hr.entity.BoardVO;
 import org.kosa.hr.page.PageRequestVO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @Slf4j
@@ -46,4 +51,33 @@ public class BoardController {
 		return "board/list";
 	}
 
+//	@RequestMapping("view")
+//	public String view(BoardVO board, Model model) throws ServletException, IOException {
+//		log.info("Controller-view");
+//
+//		// 2. jsp출력할 값 설정
+//		model.addAttribute("board", boardService.view(board));
+//
+//		return "board/view";
+//	}
+
+	@RequestMapping("jsonBoardInfo")
+	@ResponseBody
+	public Map<String, Object> jsonBoardInfo(@RequestBody BoardVO board) throws ServletException, IOException {
+		log.info("json 상세보기 -> {}", board);
+		// 1. 처리
+		BoardVO resultVO = boardService.view(board);
+  
+		Map<String, Object> map = new HashMap<>();
+		if (resultVO != null) { // 성공
+			map.put("status", 0);
+			map.put("jsonBoard", resultVO);
+		} else {
+			map.put("status", -99);
+			map.put("statusMessage", "게시물 정보 존재하지 않습니다");
+		}
+
+		return map;
+
+	}
 }

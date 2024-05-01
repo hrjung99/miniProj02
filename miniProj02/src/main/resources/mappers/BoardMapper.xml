@@ -24,9 +24,19 @@
 		from tb_board 
 		<include refid="search"/>
     </select>
- 
-
-
+    
+    <select id="view" resultType="org.kosa.hr.entity.BoardVO">
+		select 
+			b.*, m.mname bwriter  
+		from tb_board b inner join tb_member m on b.mid = m.mid  
+		where bno = #{bno}
+	</select>
+	
+	<update id="incViewCount" >
+		update tb_board set
+			 view_count = view_count + 1
+		where bno = #{bno}
+	</update>
 
 
 
