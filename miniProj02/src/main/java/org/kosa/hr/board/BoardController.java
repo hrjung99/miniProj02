@@ -17,27 +17,33 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 @Controller
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/board")
 public class BoardController {
-	
+
 	private final BoardService boardService;
 	private final CodeService codeService;
-	
+
 	@RequestMapping("list")
-	public String list(@Valid PageRequestVO pageRequestVO, BindingResult bindingResult, Model model) throws ServletException, IOException {
-		log.info("Controller-목록");
-		
+	public String list(@Valid PageRequestVO pageRequestVO, BindingResult bindingResult, Model model)
+			throws ServletException, IOException {
+		log.info("Controller-list");
+
 		log.info(pageRequestVO.toString());
-		
-		if(bindingResult.hasErrors()) {
+
+		if (bindingResult.hasErrors()) {
 			pageRequestVO = PageRequestVO.builder().build();
 		}
-		
+
+		// 2. jsp출력할 값 설정
+		model.addAttribute("pageResponseVO", boardService.getList(pageRequestVO));
+		// model.addAttribute("sizes", new int[] {10, 20, 50, 100});
+		model.addAttribute("sizes", codeService.getList());
+//		model.addAttribute("sizes", "10,20,50,100");
+
 		return "board/list";
 	}
-	
+
 }

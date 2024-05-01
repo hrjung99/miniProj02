@@ -1,45 +1,101 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-
+    pageEncoding="UTF-8"%>
+    
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>커뮤니티</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <jsp:include page="/WEB-INF/views/include/css.jsp" />
+	<jsp:include page="/WEB-INF/views/include/js.jsp"/>
+
 </head>
 <body>
-
-	<h1>게시물 목록</h1>
-
-	<form id="searchForm" action="list" method="post">
-		<select id="size" name="size">
-			<c:forEach var="size" items="${sizes}">
-				<option value="${size.codeid}" 	${pageRequestVO.size == size.codeid ? 'selected' : ''}>${size.name}</option>
-			</c:forEach>
-		</select>
-		
-		<input type="text" id="searchKey" name="searchKey" value="${param.searchKey}"> 
-		<input type="submit" value="검색">
-	</form>
-	
-	    <table border="1">
+    <jsp:include page="/WEB-INF/views/include/header.jsp" />
+</head>
+<body>
+	<h1>게시물목록</h1>
+	<!-- <h3>로그인 : ${loginVO.member_name} </h3>  -->
+    <form id="searchForm" action="list" method="post" >
+        <select id="size" name="size" >
+        	<c:forEach var="size" items="${sizes}">
+        		<option value="${size.codeid}" ${pageRequestVO.size == size.codeid ? 'selected' : ''} >${size.name}</option>
+        	</c:forEach>
+        </select>
+    	<label>제목</label>
+    	<input type="text" id="searchKey" name="searchKey" value="${param.searchKey}">
+    	<input type="submit" value="검색">
+    </form>
+    
+    <table border="1">
         <tr>
             <th>게시물번호</th>
             <th>제목</th>
+            <th>내용</th>
             <th>작성자</th>
             <th>작성일</th>
+            <th>count</th>
         </tr>
         <c:forEach var="board" items="${pageResponseVO.list}">
         <tr>
             <td style="cursor:pointer;"><a data-bs-toggle="modal" data-bs-target="#boardViewModel" data-bs-bno="${board.bno}">${board.bno}</a></td>
             <td>${board.btitle}</td>
+            <td>${board.bcontent}</td>
             <td>${board.bwriter}</td>
             <td>${board.bdate}</td>
+            <td>${board.view_count}</td>
         </tr>
         </c:forEach>
     </table>
+    <!--  페이지 네비게이션 바 출력  -->
+    <div class="float-end">
+        <ul class="pagination flex-wrap">
+            <c:if test="${pageResponseVO.prev}">
+                <li class="page-item">
+                    <a class="page-link" data-num="${pageResponseVO.start -1}">이전</a>
+                </li>
+            </c:if>
 
+            <c:forEach begin="${pageResponseVO.start}" end="${pageResponseVO.end}" var="num">
+                <li class="page-item ${pageResponseVO.pageNo == num ? 'active':''} ">
+                    <a class="page-link"  data-num="${num}">${num}</a></li>
+            </c:forEach>
+
+            <c:if test="${pageResponseVO.next}">
+                <li class="page-item">
+                    <a class="page-link"  data-num="${pageResponseVO.end + 1}">다음</a>
+                </li>
+            </c:if>
+        </ul>
+
+    </div>
+    
+<!-- 상세보기 Modal -->
+<div class="modal fade" id="boardViewModel" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">게시물 상세보기</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+	      <label>게시물 번호:</label><span id="bno"></span><br/>
+	      <label>제목 : </label><span id="btitle"></span><br/>
+	      <label>내용 : </label><span id="bcontent"></span><br/>
+	      <label>ViewCount :</label><span id="view_count"></span><br/>
+	      <label>작성자 : </label><span id="bwriter"></span><br/>
+	      <label>작성일 : </label><span id="bdate"></span><br/>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+    
 <script>
 menuActive("board_link");
 
@@ -113,7 +169,10 @@ function jsView(bno) {
 //	.Modal("#boardViewModel").model();
 //	boardViewModel.show();
 }
-
-</script>
+</script>      
+    <div class="button-container">
+        <a href="insertForm">등록</a>
+    </div>
+<%@ include file="/WEB-INF/views/include/footer.jsp" %>
 </body>
 </html>

@@ -22,10 +22,10 @@ public class BoardService {
 		List<BoardVO> list = boardMapper.getList(pageRequestVO);
 		int total = boardMapper.getTotalCount(pageRequestVO);
 		
-		log.info("list {}", list);
+		log.info("service - list {}", list);
 		log.info("total = {}", total);
 		
-		PageResponseVO<BoardVO> pageResponseVO = new PageResponseVO<>(
+		PageResponseVO<BoardVO> pageResponseVO = new PageResponseVO<BoardVO>(
 				list,
 				total,
 				pageRequestVO.getSize(),
