@@ -5,11 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.kosa.hr.code.CodeService;
 import org.kosa.hr.entity.BoardVO;
+import org.kosa.hr.entity.MemberVO;
 import org.kosa.hr.page.PageRequestVO;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,7 +35,7 @@ public class BoardController {
 	private final CodeService codeService;
 
 	@RequestMapping("list")
-	public String list(@Valid PageRequestVO pageRequestVO, BindingResult bindingResult, Model model)
+	public String list(@Valid PageRequestVO pageRequestVO, BindingResult bindingResult, Model model, Authentication authentication)
 			throws ServletException, IOException {
 		log.info("Controller-list");
 
@@ -47,6 +50,11 @@ public class BoardController {
 		// model.addAttribute("sizes", new int[] {10, 20, 50, 100});
 		model.addAttribute("sizes", codeService.getList());
 //		model.addAttribute("sizes", "10,20,50,100");
+		
+		
+		if (authentication != null) {
+			log.info("Principal {} ", authentication.getPrincipal());
+		}
 
 		return "board/list";
 	}
@@ -98,4 +106,33 @@ public class BoardController {
 		
 		return map;
 	}
+	
+	
+	//insert
+	@RequestMapping("insertForm")
+	public Object insertForm() throws ServletException, IOException {
+		log.info("Controller - insertForm");
+		return "board/insertForm";
+	}
+	
+	@RequestMapping("insert")
+	@ResponseBody
+	public Object insert(@RequestBody BoardVO boardVO, Authentication authentication) throws ServletException, IOException {
+		MemberVO loginVO = (MemberVO)authentication.getPrincipal();
+		log.info("등록 BoardVO = {}\n loginVO = {}", boardVO, loginVO);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", -99);
+		map.put("statusMessage", "게시물 등록에 실패하였습니다");
+		
+		//로그인한 사용자를 게시물 작성자로 설정한다 
+		boardVO.setMid(loginVO.getMid());
+		int updated = boardService.insert(boardVO);
+		if (updated == 1) { //성공
+			map.put("status", 0);
+		}
+		
+		return map;
+	}
+	
 }

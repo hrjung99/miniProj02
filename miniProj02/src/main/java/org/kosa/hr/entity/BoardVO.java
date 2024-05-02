@@ -14,7 +14,7 @@ public class BoardVO {
 	private String bno;
 	private String btitle;
 	private String bcontent;
-	private String MID;
+	private String mid;
 	private String bdate;
 	private String view_count;
 	private String bwriter;

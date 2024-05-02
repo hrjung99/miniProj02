@@ -53,5 +53,10 @@ public class BoardService {
 		return boardMapper.delete(board);
 	}
 	
+	//insert
+	public int insert(BoardVO board)  {
+		return boardMapper.insert(board);
+	}
+	
 
 }

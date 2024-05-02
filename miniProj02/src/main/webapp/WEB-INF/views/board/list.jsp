@@ -2,11 +2,14 @@
     pageEncoding="UTF-8"%>
     
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 
 
 <!DOCTYPE html>
 <html>
 <head>
+	<title>게시물</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <jsp:include page="/WEB-INF/views/include/css.jsp" />
@@ -17,8 +20,24 @@
     <jsp:include page="/WEB-INF/views/include/header.jsp" />
 </head>
 <body>
-	<h1>게시물목록</h1>
-	<h3>로그인 : ${loginVO.member_name} </h3>
+	<h1>게시물 목록</h1>
+	
+	<sec:authorize access="isAuthenticated()">
+	<sec:authentication property="principal" var="principal"/>
+	</sec:authorize>
+
+	<c:choose>
+	<c:when test="${empty principal}">
+		<h3>이름 : 로그인 정보 없음</h3>
+	</c:when>
+	<c:otherwise>
+		<h3>이름 : ${principal.mname}</h3>
+	</c:otherwise>
+</c:choose>
+	
+	
+	
+	
     <form id="searchForm" action="list" method="post" >
         <select id="size" name="size" >
         	<c:forEach var="size" items="${sizes}">
@@ -50,6 +69,8 @@
         </tr>
         </c:forEach>
     </table>
+    
+    <button id="goInsert">게시물 등록</button>
     <!--  페이지 네비게이션 바 출력  -->
     <div class="float-end">
         <ul class="pagination flex-wrap">
@@ -177,6 +198,7 @@ function jsDelete() {
 		});
 	}
 }
+
      // 모달 종료(hide) 버튼
      document.querySelector("#btnDelete").addEventListener("click", jsDelete);
      //document.querySelector("#btnUpdate").addEventListener("click", jsUpdate);
@@ -192,10 +214,13 @@ function jsDelete() {
 //	.Modal("#boardViewModel").model();
 //	boardViewModel.show();
 //}
+
+document.getElementById('goInsert').addEventListener('click', function() {
+    window.location.href = '/board/insertForm';
+});
+
 </script>      
-    <div class="button-container">
-        <a href="insertForm">등록</a>
-    </div>
+    
 <%@ include file="/WEB-INF/views/include/footer.jsp" %>
 </body>
 </html>
