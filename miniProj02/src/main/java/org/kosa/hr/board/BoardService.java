@@ -46,5 +46,12 @@ public class BoardService {
 		BoardVO resultVO = boardMapper.view(board);
 		return resultVO;
 	}
+	
+	
+	//delete
+	public int delete(BoardVO board)  {
+		return boardMapper.delete(board);
+	}
+	
 
 }

@@ -37,6 +37,13 @@
 			 view_count = view_count + 1
 		where bno = #{bno}
 	</update>
+	
+	
+	<delete id="delete" >
+		delete 
+		from tb_board 
+		where bno = #{bno}
+	</delete>
 
 
 

@@ -80,4 +80,22 @@ public class BoardController {
 		return map;
 
 	}
+	
+	@RequestMapping("delete")
+	@ResponseBody
+	public Map<String, Object> delete(@RequestBody BoardVO board) throws ServletException, IOException {
+		log.info("삭제 -> {}", board);
+		//1. 처리
+		int updated = boardService.delete(board);
+		
+		Map<String, Object> map = new HashMap<>();
+		if (updated == 1) { //성공
+			map.put("status", 0);
+		} else {
+			map.put("status", -99);
+			map.put("statusMessage", "게시물 정보 삭제 실패하였습니다");
+		}
+		
+		return map;
+	}
 }

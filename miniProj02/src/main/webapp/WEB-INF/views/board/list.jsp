@@ -18,7 +18,7 @@
 </head>
 <body>
 	<h1>게시물목록</h1>
-	<!-- <h3>로그인 : ${loginVO.member_name} </h3>  -->
+	<h3>로그인 : ${loginVO.member_name} </h3>
     <form id="searchForm" action="list" method="post" >
         <select id="size" name="size" >
         	<c:forEach var="size" items="${sizes}">
@@ -90,7 +90,10 @@
 	      <label>작성일 : </label><span id="bdate"></span><br/>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btnDelete" >삭제</button>
+           <button type="button" class="btn btn-secondary" id="btnUpdate">수정</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        
       </div>
     </div>
   </div>
@@ -159,8 +162,28 @@ boardViewModel.addEventListener('shown.bs.modal', function (event) {
 	});
 
 })
+
+
+function jsDelete() {
+	if (confirm("정말로 삭제하시겠습니까?")) {
+		myFetch("delete", {bno : span_bno.innerText}, json => {
+			if(json.status == 0) {
+				//성공
+				alert("게시물 정보를 삭제 하였습니다");
+				location = "list";
+			} else {
+				alert(json.statusMessage);
+			}
+		});
+	}
+}
+     // 모달 종료(hide) 버튼
+     document.querySelector("#btnDelete").addEventListener("click", jsDelete);
+     //document.querySelector("#btnUpdate").addEventListener("click", jsUpdate);
+
+     
 	
-function jsView(bno) {
+//function jsView(bno) {
 	//인자의 값을 설정한다 
 //	bno.value = bno;
 	
@@ -168,7 +191,7 @@ function jsView(bno) {
 //	listForm.submit();
 //	.Modal("#boardViewModel").model();
 //	boardViewModel.show();
-}
+//}
 </script>      
     <div class="button-container">
         <a href="insertForm">등록</a>
