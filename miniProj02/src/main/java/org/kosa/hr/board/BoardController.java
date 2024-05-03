@@ -1,14 +1,20 @@
 package org.kosa.hr.board;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.kosa.hr.code.CodeService;
+import org.kosa.hr.entity.BoardFileVO;
 import org.kosa.hr.entity.BoardVO;
 import org.kosa.hr.entity.MemberVO;
 import org.kosa.hr.page.PageRequestVO;
@@ -16,6 +22,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -80,6 +88,8 @@ public class BoardController {
 		if (resultVO != null) { // 성공
 			map.put("status", 0);
 			map.put("jsonBoard", resultVO);
+			log.info("json 상세보기 -> {}", resultVO);
+
 		} else {
 			map.put("status", -99);
 			map.put("statusMessage", "게시물 정보 존재하지 않습니다");
@@ -117,7 +127,7 @@ public class BoardController {
 	
 	@RequestMapping("insert")
 	@ResponseBody
-	public Object insert(@RequestBody BoardVO boardVO, Authentication authentication) throws ServletException, IOException {
+	public Object insert(BoardVO boardVO, Authentication authentication) throws ServletException, IOException {
 		MemberVO loginVO = (MemberVO)authentication.getPrincipal();
 		log.info("등록 BoardVO = {}\n loginVO = {}", boardVO, loginVO);
 		
@@ -135,4 +145,37 @@ public class BoardController {
 		return map;
 	}
 	
+	@GetMapping("fileDownload/{board_file_no}")
+	public void downloadFile(@PathVariable("board_file_no") int board_file_no, HttpServletResponse response) throws Exception{
+		OutputStream out = response.getOutputStream();
+		
+		BoardFileVO boardFileVO = boardService.getBoardFile(board_file_no);
+		
+		if (boardFileVO == null) {
+			response.setStatus(404);
+		} else {
+			
+			String originName = boardFileVO.getOriginal_filename();
+			originName = URLEncoder.encode(originName, "UTF-8");
+			//다운로드 할 때 헤더 설정
+			response.setHeader("Cache-Control", "no-cache");
+			response.addHeader("Content-disposition", "attachment; fileName="+originName);
+			response.setContentLength((int)boardFileVO.getSize());
+			response.setContentType(boardFileVO.getContent_type());
+			
+			//파일을 바이너리로 바꿔서 담아 놓고 responseOutputStream에 담아서 보낸다.
+			FileInputStream input = new FileInputStream(new File(boardFileVO.getReal_filename()));
+			
+			//outputStream에 8k씩 전달
+	        byte[] buffer = new byte[1024*8];
+	        
+	        while(true) {
+	        	int count = input.read(buffer);
+	        	if(count<0)break;
+	        	out.write(buffer,0,count);
+	        }
+	        input.close();
+	        out.close();
+		}
+	}		
 }

@@ -11,13 +11,16 @@
             </if>
         </where>
     </sql>
- 
-	<select id="getList" resultType="org.kosa.hr.entity.BoardVO">
-		SELECT B.BNO,B.BTITLE, B.BCONTENT, M.MNAME AS BWRITER , B.BDATE, B.view_count FROM TB_BOARD B INNER JOIN TB_MEMBER M ON B.MID=M.MID  	
+
+
+    <select id="getList" resultType="org.kosa.hr.entity.BoardVO">
+		select 
+			b.*, m.mname bwriter  
+		from tb_board b inner join tb_member m on b.mid = m.mid
 		<include refid="search"/>
 		order by bno desc limit #{skip}, #{size}
     </select>
-    
+
     <select id="getTotalCount" resultType="int">
 		select 
 			count(*)   
@@ -25,7 +28,7 @@
 		<include refid="search"/>
     </select>
     
-    <select id="view" resultType="org.kosa.hr.entity.BoardVO">
+	<select id="view" resultType="org.kosa.hr.entity.BoardVO">
 		select 
 			b.*, m.mname bwriter  
 		from tb_board b inner join tb_member m on b.mid = m.mid  
@@ -38,14 +41,28 @@
 		where bno = #{bno}
 	</update>
 	
-	
 	<delete id="delete" >
 		delete 
 		from tb_board 
 		where bno = #{bno}
 	</delete>
 	
+	<update id="update" >
+		update tb_board set
+			btitle   = #{btitle},
+			bcontent = #{bcontent}
+		where bno = #{bno}
+	</update>
+
+	<delete id="allDelete" >
+		delete 
+		from tb_board 
+	</delete>
+	
 	<insert id="insert" >
+		<selectKey order="AFTER" keyProperty="bno" resultType="String">
+			select LAST_INSERT_ID()
+		</selectKey>
 		insert into tb_board (
 			btitle,
 			bcontent,
@@ -56,9 +73,5 @@
 			#{mid}
 		) 
 	</insert>
-
-
-
-
-
+    
 </mapper>

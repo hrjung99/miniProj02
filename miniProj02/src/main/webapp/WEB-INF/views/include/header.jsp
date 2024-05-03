@@ -20,7 +20,7 @@
   		</c:when>
   		<c:otherwise>
 			<li class="nav-item">
-			    <a class="nav-link" href="<c:url value='/member/logout'/>" id="login_link">${loginVO.member_name}</a>
+			    <a class="nav-link" href="<c:url value='/member/logout'/>" id="login_link">${loginVO.mname}</a>
 			</li>
 			<li class="nav-item">
 			    <a class="nav-link" href="<c:url value='/member/mypage'/>" id="mypage_link">나의정보</a>

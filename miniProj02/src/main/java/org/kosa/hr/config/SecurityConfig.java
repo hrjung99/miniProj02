@@ -1,11 +1,10 @@
 package org.kosa.hr.config;
 
+import org.kosa.hr.auth.handler.AuthFailureHandler;
+import org.kosa.hr.auth.handler.AuthSucessHandler;
 import org.kosa.hr.member.MemberService;
 
 import java.net.URLEncoder;
-
-import org.kosa.hr.member.AuthFailureHandler;
-import org.kosa.hr.member.AuthSucessHandler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

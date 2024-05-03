@@ -12,13 +12,13 @@
 	<title>게시물</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="_csrf" content="${_csrf.token}"/>
+	<meta name="_csrf_header" content="${_csrf.headerName}"/>
     <jsp:include page="/WEB-INF/views/include/css.jsp" />
 	<jsp:include page="/WEB-INF/views/include/js.jsp"/>
 
 </head>
-<body>
     <jsp:include page="/WEB-INF/views/include/header.jsp" />
-</head>
 <body>
 	<h1>게시물 목록</h1>
 	
@@ -109,6 +109,7 @@
 	      <label>ViewCount :</label><span id="view_count"></span><br/>
 	      <label>작성자 : </label><span id="bwriter"></span><br/>
 	      <label>작성일 : </label><span id="bdate"></span><br/>
+	      <label>첨부파일 : </label><span id="boardFile" data-board-file-no="" onclick="onBoardFileDownload(this)"></span><br/>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" id="btnDelete" >삭제</button>
@@ -154,6 +155,7 @@ const span_view_count = document.querySelector(".modal-body #view_count");
 const span_bwriter = document.querySelector(".modal-body #bwriter");
 const span_bdate = document.querySelector(".modal-body #bdate");
 
+
 boardViewModel.addEventListener('shown.bs.modal', function (event) {
 	const a = event.relatedTarget;
 	const bno = a.getAttribute('data-bs-bno'); //a.dataset["bs-bno"] //, a.dataset.bs-bno 사용안됨
@@ -165,24 +167,41 @@ boardViewModel.addEventListener('shown.bs.modal', function (event) {
 	span_view_count.innerText = "";
 	span_bwriter.innerText = "";
 	span_bdate.innerText = "";
+	boardFile.innerText = "";
 
-	myFetch("jsonBoardInfo", { bno : bno }, json => {
-		if(json.status == 0) {
-			//성공
-			const jsonBoard = json.jsonBoard; 
-			span_bno.innerText = jsonBoard.bno;
-			span_btitle.innerText = jsonBoard.btitle;
-			span_bcontent.innerText = jsonBoard.bcontent;
-			span_view_count.innerText = jsonBoard.view_count;
-			span_bwriter.innerText = jsonBoard.bwriter;
-			span_bdate.innerText = jsonBoard.bdate;
-			
-		} else {
-			alert(json.statusMessage);
-		}
-	});
+
+	myFetch("jsonBoardInfo", {
+		[`${_csrf.parameterName}`] : "${_csrf.token}", 
+		bno : bno 
+	}, json => {
+	if(json.status == 0) {
+		//성공
+		const jsonBoard = json.jsonBoard; 
+		span_bno.innerText = jsonBoard.bno;
+		span_btitle.innerText = jsonBoard.btitle;
+		span_bcontent.innerHTML = jsonBoard.bcontent;
+		span_view_count.innerText = jsonBoard.view_count;
+		span_bwriter.innerText = jsonBoard.bwriter;
+		span_bdate.innerText = jsonBoard.bdate;
+		//첨부파일명을 출력한다
+		boardFile.innerText = jsonBoard.boardFileVO.original_filename;
+		//첨부파일의 번호를 설정한다 
+		boardFile.setAttribute("data-board-file-no", jsonBoard.boardFileVO.board_file_id);
+		
+	} else {
+		alert(json.statusMessage);
+	}
+});
 
 })
+
+const onBoardFileDownload = boardFile => {
+const board_file_no = boardFile.getAttribute("data-board-file-no");
+alert("첨부파일 번호 = " + board_file_no);
+location.href = "<c:url value='/board/fileDownload/'/>" + board_file_no;
+}
+
+
 
 
 function jsDelete() {

@@ -11,6 +11,9 @@
 	<title>게시물 등록</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="_csrf" content="${_csrf.token}"/>
+	<meta name="_csrf_header" content="${_csrf.headerName}"/>
+    
     <jsp:include page="/WEB-INF/views/include/css.jsp" />
 	<jsp:include page="/WEB-INF/views/include/js.jsp"/>
 	
@@ -37,9 +40,7 @@
 	
 
 </head>
-<body>
     <jsp:include page="/WEB-INF/views/include/header.jsp" />
-</head>
 <body>
 	<h1>게시물 등록</h1>
 <%-- 로그인 사용자 정보 출력 --%>
@@ -61,6 +62,11 @@
         <input class="btitle" id="btitle" name="btitle" required="required" placeholder="게시물 제목을 입력해주세요"><br/>
         <textarea id="bcontent" name="bcontent" required="required" placeholder="게시물 내용을 입력해주세요">
         </textarea>
+        <div id="div_file">
+			<input  type='file' name='file' />
+		</div>
+        
+        
         <br/>
     <div>
         <input type="submit" value="등록">
@@ -90,7 +96,7 @@
     	//서버에 form data를 전송하지 않는다 
     	e.preventDefault();
     	
-		myFetch("insert", "rForm", json => {
+    	myFileFetch("insert", "rForm", json => {
 			switch(json.status) {
 			case 0:
 				//성공

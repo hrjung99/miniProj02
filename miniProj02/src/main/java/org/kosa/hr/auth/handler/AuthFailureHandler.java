@@ -1,4 +1,4 @@
-package org.kosa.hr.member;
+package org.kosa.hr.auth.handler;
 
 import java.io.IOException;
 import java.net.URLEncoder;
