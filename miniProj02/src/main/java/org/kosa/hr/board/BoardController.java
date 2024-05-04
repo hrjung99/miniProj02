@@ -24,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -177,5 +178,50 @@ public class BoardController {
 	        input.close();
 	        out.close();
 		}
-	}		
+	} 
+	
+	
+	@GetMapping("updateForm/{bno}")
+	public Object updateForm(@PathVariable("bno") String bno, BoardVO board, Model model) throws ServletException, IOException {
+		log.info("수정화면");
+		
+		// BoardVO 객체 생성 및 bno 설정
+	    board = new BoardVO();
+	    board.setBno(bno);
+
+	    // 서비스에서 게시글 정보를 가져오기
+	    BoardVO boardDetails = boardService.view(board);
+	    if (boardDetails == null) {
+	        log.info("게시글 정보를 찾을 수 없습니다.");
+	        return "redirect:/errorPage";  // 오류 페이지 또는 적절한 리디렉션 경로로 변경
+	    }
+
+	    // 모델에 게시글 정보 추가
+	    model.addAttribute("board", boardDetails);
+	    	
+		return "board/updateForm";
+	}
+
+
+	
+	@PostMapping("/update")
+	public Object  update(BoardVO board) throws ServletException, IOException {
+		log.info("수정 board => {}", board);
+		
+		//1. 처리
+		int updated = boardService.update(board);
+		
+		Map<String, Object> map = new HashMap<>();
+		if (updated == 1) { //성공
+			map.put("status", 0);
+		} else {
+			map.put("status", -99);
+			map.put("statusMessage", "게시물 정보 수정 실패하였습니다");
+		}
+		
+		return "redirect:/board/list";
+	}
+	
+	
+	
 }

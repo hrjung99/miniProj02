@@ -133,4 +133,20 @@ public class BoardService {
 			public BoardFileVO getBoardFile(int board_file_no) {
 				return boardFileMapper.getBoardFile(board_file_no);
 			}
+			
+			
+			public BoardVO updateForm(BoardVO board)  {
+				return boardMapper.view(board);
+
+
+			}
+			
+			public int update(BoardVO board) {
+				return boardMapper.update(board);
+			}
+			
+			
+			
+			
+			
 }

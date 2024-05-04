@@ -54,10 +54,7 @@
 		where bno = #{bno}
 	</update>
 
-	<delete id="allDelete" >
-		delete 
-		from tb_board 
-	</delete>
+	
 	
 	<insert id="insert" >
 		<selectKey order="AFTER" keyProperty="bno" resultType="String">
@@ -73,5 +70,7 @@
 			#{mid}
 		) 
 	</insert>
+	
+	
     
 </mapper>

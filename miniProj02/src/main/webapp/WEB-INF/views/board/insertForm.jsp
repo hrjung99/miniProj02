@@ -79,8 +79,9 @@
 	//상단 메뉴에서 게시물이 선택되게 함  
 	menuActive("board_link");
 	
-	//cfeditor관련 설정 
-	let bcontent; //cfeditor의 객체를 저장하기 위한 변수 
+	
+	//ckeditor관련 설정 
+	let bcontent; //ckeditor의 객체를 저장하기 위한 변수 
 	ClassicEditor.create(document.querySelector('#bcontent'))
 	.then(editor => {
 		console.log('Editor was initialized');

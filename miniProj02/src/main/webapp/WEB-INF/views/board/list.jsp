@@ -218,9 +218,16 @@ function jsDelete() {
 	}
 }
 
+function goUpdateForm(){
+    var bno = span_bno.innerText;  // 현재 모달에 표시된 bno 값을 가져옴
+    window.location.href = '/board/updateForm/' + bno;  // bno 값을 포함하여 수정 페이지로 리디렉트
+}
+
+
+
      // 모달 종료(hide) 버튼
      document.querySelector("#btnDelete").addEventListener("click", jsDelete);
-     //document.querySelector("#btnUpdate").addEventListener("click", jsUpdate);
+     document.querySelector("#btnUpdate").addEventListener("click", goUpdateForm);
 
      
 	
@@ -234,10 +241,12 @@ function jsDelete() {
 //	boardViewModel.show();
 //}
 
+
+
 document.getElementById('goInsert').addEventListener('click', function() {
     window.location.href = '/board/insertForm';
 });
-
+  
 </script>      
     
 <%@ include file="/WEB-INF/views/include/footer.jsp" %>
