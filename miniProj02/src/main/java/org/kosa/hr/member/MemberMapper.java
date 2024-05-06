@@ -24,5 +24,8 @@ public interface MemberMapper {
 	List<MemberVO> getList(PageRequestVO pageRequestVO);
 	//paging
 	int getTotalCount(PageRequestVO pageRequestVO);
+	
+	//view
+	MemberVO view(MemberVO memberVO);
 
 }

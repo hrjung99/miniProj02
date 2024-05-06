@@ -28,8 +28,9 @@ public class MemberVO implements UserDetails {
 	private String mpno;
 	private String mgender;
 	
-	private LocalDateTime member_reg_date;
 	private String member_roles;
+	private LocalDateTime member_reg_date;
+	private LocalDateTime member_update_date;
 	private String member_account_expired; 
 	private String member_account_locked;
 	private int    member_login_count;

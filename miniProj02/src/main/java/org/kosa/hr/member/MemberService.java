@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.kosa.hr.member.MemberMapper;
 import org.kosa.hr.entity.MemberVO;
+import org.kosa.hr.entity.MemberVO;
 import org.kosa.hr.page.PageRequestVO;
 import org.kosa.hr.page.PageResponseVO;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,16 @@ public class MemberService {
 
 		return pageResponseVO;
 	}
+	
+	public MemberVO view(MemberVO member)  {
+		
+		//view Count의 값이 증가된 객체를 얻는다
+		MemberVO resultVO = memberMapper.view(member);
+		
+		return resultVO;
+	}
+	
+	
 
 	
 	
