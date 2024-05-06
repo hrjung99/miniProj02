@@ -29,7 +29,7 @@
 	<c:otherwise>
 		이름 : ${principal.mname}
 		<ul class="navbar-nav">
-			<li class="nav-item"><a class="nav-link" href="/member/updateForm">회원정보</a></li>
+			<li class="nav-item"><a class="nav-link" href="/member/list">회원정보</a></li>
 			<li class="nav-item"><a class="nav-link" href="/login/logout">로그아웃</a></li>
 			<li class="nav-item"><a class="nav-link" href="/board/list">게시물 목록</a></li>
 		</ul>

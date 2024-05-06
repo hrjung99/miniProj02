@@ -13,9 +13,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="_csrf" content="${_csrf.token}"/>
 	<meta name="_csrf_header" content="${_csrf.headerName}"/>
+	<meta name="_csrf_parameter" content="${_csrf.parameterName}"/>
+	
     
     <jsp:include page="/WEB-INF/views/include/css.jsp" />
 	<jsp:include page="/WEB-INF/views/include/js.jsp"/>
+	
+	
+	
+	
 	
 	 <style type="text/css">
     	#rForm {
@@ -59,6 +65,8 @@
     <form id="rForm" action="insert" method="post">
 		<%-- csrf 토큰 설정 --%>
 		<sec:csrfInput/>
+		<!-- 게시물 토큰을 설정한다 -->
+        <input type="hidden" id="board_token" name="board_token" value="${board_token}"><br/>
         <input class="btitle" id="btitle" name="btitle" required="required" placeholder="게시물 제목을 입력해주세요"><br/>
         <textarea id="bcontent" name="bcontent" required="required" placeholder="게시물 내용을 입력해주세요">
         </textarea>
@@ -80,9 +88,18 @@
 	menuActive("board_link");
 	
 	
-	//ckeditor관련 설정 
-	let bcontent; //ckeditor의 객체를 저장하기 위한 변수 
-	ClassicEditor.create(document.querySelector('#bcontent'))
+	const csrfParameter = document.querySelector("meta[name='_csrf_parameter']").content;
+	const csrfToken = document.querySelector("meta[name='_csrf']").content;
+	//이미지 업로드 URL
+	const board_image_url = "<c:url value='/board/boardImageUpload?board_token=${board_token}&'/>" + csrfParameter + "=" + csrfToken;
+	//cfeditor관련 설정 
+	let bcontent; //cfeditor의 객체를 저장하기 위한 변수 
+	ClassicEditor.create(document.querySelector('#bcontent'),{
+		//이미지 업로드 URL을 설정한다 
+		ckfinder: {
+			uploadUrl : board_image_url
+		}
+	})
 	.then(editor => {
 		console.log('Editor was initialized');
 		//ckeditor객체를 전역변수 bcontent에 설정함 
@@ -91,6 +108,8 @@
 	.catch(error => {
 		console.error(error);
 	});
+	
+	
 
     const rForm = document.getElementById("rForm");
     rForm.addEventListener("submit", e => {

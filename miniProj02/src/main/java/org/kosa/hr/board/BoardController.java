@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -15,6 +16,7 @@ import javax.validation.Valid;
 
 import org.kosa.hr.code.CodeService;
 import org.kosa.hr.entity.BoardFileVO;
+import org.kosa.hr.entity.BoardImageFileVO;
 import org.kosa.hr.entity.BoardVO;
 import org.kosa.hr.entity.MemberVO;
 import org.kosa.hr.page.PageRequestVO;
@@ -33,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @Slf4j
@@ -42,6 +45,7 @@ public class BoardController {
 
 	private final BoardService boardService;
 	private final CodeService codeService;
+	private final ServletContext application;
 
 	@RequestMapping("list")
 	public String list(@Valid PageRequestVO pageRequestVO, BindingResult bindingResult, Model model, Authentication authentication)
@@ -121,11 +125,24 @@ public class BoardController {
 	
 	//insert
 	@RequestMapping("insertForm")
-	public Object insertForm() throws ServletException, IOException {
+	public Object insertForm(Model model) throws ServletException, IOException {
 		log.info("Controller - insertForm");
+		
+		//게시물의 토큰을 생성하여 Model에 저장 한다 
+				model.addAttribute("board_token", boardService.getBoardToken());
+				
+				
 		return "board/insertForm";
 	}
 	
+	
+	// 만약 게시글 작성 중 서버에 이미지를 업로드한 후 작성중인 게시글을 저장하지 않고 
+		// 취소 하고 나가는 경우 업로드한 이미지가 존재하게 된다 
+		// 이런 경우 발생하면 서버에 의미 없는 업로드된 이미지가 존재하게 된다  
+		// token 값은 시작시 발급 받고, 상태는 임시 작업 상태(0)임 
+		// 게시물 등록 작업이 완료되면 token의 상태를 작업 완료(1)로 설정해야한다  
+		// 만약 마지막 작업이 완료 되지 않은 경우 스토리지 서버에 저장된 파일을 
+		// 삭제 할 수 있게 구현 해야 한다(현재는 사용하지 않음)
 	@RequestMapping("insert")
 	@ResponseBody
 	public Object insert(BoardVO boardVO, Authentication authentication) throws ServletException, IOException {
@@ -146,6 +163,33 @@ public class BoardController {
 		return map;
 	}
 	
+	@PostMapping("boardImageUpload")
+	@ResponseBody
+	public Object boardImageUpload(BoardImageFileVO boardImageFileVO) throws ServletException, IOException {
+
+		// ckeditor는 이미지 업로드 후 이미지 표시하기 위해 uploaded 와 url을 json 형식으로 받아야 함
+		// ckeditor 에서 파일을 보낼 때 upload : [파일] 형식으로 해서 넘어옴, upload라는 키 이용하여 파일을 저장 한다
+		MultipartFile file = boardImageFileVO.getUpload();
+		String board_token = boardImageFileVO.getBoard_token();
+
+		System.out.println("board_token = " + board_token);
+
+		//이미지 첨부 파일을 저장한다 
+		String board_image_file_id = boardService.boardImageFileUpload(board_token, file);
+
+
+		// 이미지를 현재 경로와 연관된 파일에 저장하기 위해 현재 경로를 알아냄
+		String uploadPath = application.getContextPath() + "/board/image/" + board_image_file_id;
+
+		Map<String, Object> result = new HashMap<>();
+		result.put("uploaded", true); // 업로드 완료
+		result.put("url", uploadPath); // 업로드 파일의 경로
+
+		return result;
+	}
+	
+	
+	//게시물 첨부 파일 다운로드 
 	@GetMapping("fileDownload/{board_file_no}")
 	public void downloadFile(@PathVariable("board_file_no") int board_file_no, HttpServletResponse response) throws Exception{
 		OutputStream out = response.getOutputStream();
@@ -178,7 +222,44 @@ public class BoardController {
 	        input.close();
 	        out.close();
 		}
-	} 
+	}
+	
+	//게시물 내용에 추가된 이미지 파일 다운로드 
+		@GetMapping("image/{board_image_file_id}")
+		public void image(@PathVariable("board_image_file_id") String board_image_file_id, HttpServletResponse response) throws Exception{
+			OutputStream out = response.getOutputStream();
+			
+			BoardImageFileVO boardImageFileVO = boardService.getBoardImageFile(board_image_file_id);
+			
+			if (boardImageFileVO == null) {
+				response.setStatus(404);
+			} else {
+				
+				String originName = boardImageFileVO.getOriginal_filename();
+				originName = URLEncoder.encode(originName, "UTF-8");
+				//다운로드 할 때 헤더 설정
+				response.setHeader("Cache-Control", "no-cache");
+				response.addHeader("Content-disposition", "attachment; fileName="+originName);
+				response.setContentLength((int)boardImageFileVO.getSize());
+				response.setContentType(boardImageFileVO.getContent_type());
+				
+				//파일을 바이너리로 바꿔서 담아 놓고 responseOutputStream에 담아서 보낸다.
+				FileInputStream input = new FileInputStream(new File(boardImageFileVO.getReal_filename()));
+				
+				//outputStream에 8k씩 전달
+		        byte[] buffer = new byte[1024*8];
+		        
+		        while(true) {
+		        	int count = input.read(buffer);
+		        	if(count<0)break;
+		        	out.write(buffer,0,count);
+		        }
+		        input.close();
+		        out.close();
+			}
+		}
+
+
 	
 	
 	@GetMapping("updateForm/{bno}")

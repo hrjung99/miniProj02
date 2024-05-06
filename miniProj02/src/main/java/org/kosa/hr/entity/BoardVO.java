@@ -23,6 +23,9 @@ public class BoardVO {
 	private String view_count;
 	private String bwriter;
 	
+	//게시물 토큰 변수 선언 
+		private String board_token;
+	
 	//업로드 파일
 	@JsonIgnore
 		private MultipartFile file;
