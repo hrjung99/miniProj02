@@ -20,7 +20,46 @@
 	<jsp:include page="/WEB-INF/views/include/js.jsp"/>
 	
 	
-	
+	<style type="text/css">
+        body {
+            background-color: #e0ffe0; /* 밝은 초록색 배경 */
+        }
+        h1 {
+            color: #006400; /* 진한 초록색 */
+            text-align: center;
+        }
+        #rForm {
+            text-align: center;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+        }
+        .btitle, #bcontent {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .btitle {
+            height: 40px;
+        }
+        #bcontent {
+            height: 200px; /* Textarea 높이 */
+        }
+        input[type="submit"], a {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            background-color: #006400; /* 진한 초록색 */
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        input[type="submit"]:hover, a:hover {
+            background-color: #004d00; /* 더 진한 초록색 */
+        }
+    </style>
 	
 	
 	 <style type="text/css">
@@ -130,5 +169,6 @@
     });
     
 </script>
+  <%@ include file="/WEB-INF/views/include/footer.jsp" %>
 </body>
 </html>

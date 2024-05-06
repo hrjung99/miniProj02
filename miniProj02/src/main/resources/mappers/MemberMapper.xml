@@ -73,7 +73,7 @@
     
     
     <select id="view" resultType="org.kosa.hr.entity.MemberVO">
-		
+		SELECT M.*, H.HOBBY FROM TB_MEMBER M, (SELECT DISTINCT th.HOBBY FROM TB_HOBBY TH INNER JOIN TB_MEMBER_HOBBY TMH WHERE TMH.MID=#{mid}) H WHERE MID = #{mid};
 	</select>
     
     

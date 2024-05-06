@@ -61,7 +61,7 @@ public class MemberController {
 	public Map<String, Object> view(@RequestBody MemberVO member) throws ServletException, IOException {
 		log.info("json 상세보기 -> {}", member);
 
-		BoardVO resultVO = memberService.view(member);
+		MemberVO resultVO = memberService.view(member);
 
 		Map<String, Object> map = new HashMap<>();
 		if (resultVO != null) { // 성공

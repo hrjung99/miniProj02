@@ -34,10 +34,9 @@ public class MemberService {
 	
 	public MemberVO view(MemberVO member)  {
 		
-		//view Count의 값이 증가된 객체를 얻는다
-		MemberVO resultVO = memberMapper.view(member);
+		member = memberMapper.view(member);
 		
-		return resultVO;
+		return member;
 	}
 	
 	
